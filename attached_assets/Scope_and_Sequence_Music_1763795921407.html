@@ -1,0 +1,706 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Life Skills Scope and Sequence</title>
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS via CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc;
+        }
+        .table-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .table-cell {
+            padding: 1rem;
+            min-height: 80px;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            text-align: left;
+        }
+        .table-cell:hover {
+            background-color: #CBDEFD;
+            color: #000000;
+        }
+        .table-cell:hover .unit-title, .table-cell:hover .unit-description {
+            color: #000000;
+        }
+        .table-cell:hover .unit-outcomes {
+            color: #002664;
+        }
+        .rotated-text {
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            white-space: nowrap;
+        }
+        /* Custom styles for the dropdown to match the overall aesthetic */
+        .select-container {
+            padding: 1rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .select-button, .print-button {
+            background-color: #146CFD;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 9999px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin: 0 8px;
+            border: none;
+        }
+        .select-button.active {
+            background-color: #002664;
+            box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff;
+            }
+            .select-container, .print-button, #unit-details, .p-4.text-sm.font-semibold, .rotated-text {
+                display: none;
+            }
+            .table-container {
+                padding: 0;
+                box-shadow: none;
+            }
+            .table-cell {
+                border-bottom: 1px solid #000;
+                padding: 0.5rem;
+                min-height: auto;
+                cursor: default;
+            }
+            .unit-title {
+                font-size: 1.1rem;
+            }
+            .unit-outcomes {
+                font-size: 0.7rem;
+            }
+            .unit-description {
+                font-size: 0.8rem;
+            }
+            #schedule-header {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 sm:p-8">
+
+    <div class="text-center text-3xl sm:text-4xl font-extrabold text-[#002664] mt-8 mb-4">Music Life Skills Scope and Sequence</div>
+    <div class="select-container">
+        <div class="flex flex-nowrap justify-center space-x-1 sm:space-x-2">
+            <button class="select-button active" data-stage="7">Component A</button>
+            <button class="select-button" data-stage="8">Component B</button>
+            <button class="select-button" data-stage="9">Component C</button>
+            <button class="select-button" data-stage="10">Component D</button>
+            <button class="select-button" data-stage="11">Component E</button>
+            <button class="select-button" data-stage="12">Component F</button>
+            <button class="print-button hidden" id="print-button">Print PDF</button>
+        </div>
+    </div>
+
+    <div class="table-container bg-white rounded-xl shadow-lg overflow-hidden mt-8">
+        <div class="p-4 text-sm font-semibold text-gray-600">
+            *Click on the unit name to access available resources
+        </div>
+        <div id="schedule-header" class="grid grid-cols-11 text-center text-sm font-medium bg-[#002664] text-white border-b-2 border-white">
+            <!-- Header Row -->
+            <div class="col-span-1 border-r border-white"></div>
+            <div class="col-span-1 py-4">Week 1</div>
+            <div class="col-span-1 py-4">Week 2</div>
+            <div class="col-span-1 py-4">Week 3</div>
+            <div class="col-span-1 py-4">Week 4</div>
+            <div class="col-span-1 py-4">Week 5</div>
+            <div class="col-span-1 py-4">Week 6</div>
+            <div class="col-span-1 py-4">Week 7</div>
+            <div class="col-span-1 py-4">Week 8</div>
+            <div class="col-span-2 py-4 border-l border-white">Weeks 9 & 10</div>
+        </div>
+
+        <!-- Table Body Rows will be dynamically injected here -->
+        <div id="schedule-body" class="text-sm"></div>
+    </div>
+
+    <!-- New section that opens on click -->
+    
+    <!-- New standardized Unit Details panel -->
+    <div id="unit-details" class="table-container bg-white rounded-xl shadow-lg mt-8 p-8 transition-all duration-300 ease-in-out hidden">
+        <h2 id="unit-title" class="text-2xl font-bold text-[#146CFD] mb-2"></h2>
+        <p id="unit-subtitle" class="text-lg text-[#146CFD] mb-4"></p>
+        <p class="text-sm text-gray-500 mb-6">Lesson resources will be released by Term 1, 2026</p>
+
+        <!--  Section -->
+        <div class="border-t border-b border-gray-200 py-4">
+            <div id="outcomes-header" class="flex justify-between items-center cursor-pointer">
+                <h3 class="text-lg font-semibold text-[#146CFD]"></h3>
+                <svg id="outcomes-arrow" class="w-6 h-6 text-gray-500 transform transition-transform duration-300 rotate-90" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"></path>
+                </svg>
+            </div>
+            <div id="outcomes-content" class="mt-4 hidden"></div>
+        </div>
+
+        <!-- Resources Section -->
+        <div class="border-b border-gray-200 py-4 mt-4">
+            <div id="resources-header" class="flex justify-between items-center cursor-pointer">
+                <h3 class="text-lg font-semibold text-[#146CFD]">Resources</h3>
+                <svg id="resources-arrow" class="w-6 h-6 text-gray-500 transform transition-transform duration-300 rotate-90" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"></path>
+                </svg>
+            </div>
+            <div id="resources-content" class="mt-4 hidden">
+                <button id="add-resource" class="bg-[#146CFD] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#002664]">+ Add Resource</button>
+                <input type="file" id="resource-file" class="hidden" />
+                <ul id="resource-list" class="mt-4 space-y-2 text-sm text-gray-700"></ul>
+            </div>
+        </div>
+    </div>
+
+            <div id="outcomes-content" class="mt-4 hidden"></div>
+        </div>
+        
+        <!-- Lesson Resources Section -->
+        <div class="border-t border-b border-gray-200 py-4">
+            <div id="lesson-header" style="display:none" class="flex justify-between items-center cursor-pointer">
+                <h3 class="text-lg font-semibold text-[#146CFD]">Lesson resources for download</h3>
+                <svg id="lesson-arrow" style="display:none" class="w-6 h-6 text-gray-500 transform transition-transform duration-300 rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+            </div>
+            <div id="lesson-content" style="display:none" class="mt-4 hidden"></div>
+        </div>
+
+        <!-- Curriculum Resources Section -->
+        <div class="border-b border-gray-200 py-4">
+            <div id="curriculum-header" style="display:none" class="flex justify-between items-center cursor-pointer">
+                <h3 class="text-lg font-semibold text-[#146CFD]">Curriculum resources for download</h3>
+                <svg id="curriculum-arrow" style="display:none" class="w-6 h-6 text-gray-500 transform transition-transform duration-300 rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+            </div>
+            <div id="curriculum-content" style="display:none" class="mt-4 hidden"></div>
+        </div>
+
+        <!-- Support Resources Section -->
+        <div class="border-b border-gray-200 py-4">
+            <div id="support-header" style="display:none" class="flex justify-between items-center cursor-pointer">
+                <h3 class="text-lg font-semibold text-[#146CFD]">Support resources</h3>
+                <svg id="support-arrow" style="display:none" class="w-6 h-6 text-gray-500 transform transition-transform duration-300 rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+            </div>
+            <div id="support-content" style="display:none" class="mt-4 hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const scheduleBody = document.getElementById('schedule-body');
+        const unitDetails = document.getElementById('unit-details');
+        const unitTitle = document.getElementById('unit-title');
+        const unitSubtitle = document.getElementById('unit-subtitle');
+        const outcomesContent = document.getElementById('outcomes-content');
+        const lessonContent = document.getElementById('lesson-content');
+        const curriculumContent = document.getElementById('curriculum-content');
+        const supportContent = document.getElementById('support-content');
+        const stageButtons = document.querySelectorAll('.select-button');
+        const printButton = document.getElementById('print-button');
+
+        // Central data object for the Music Life Skills scope and sequence
+        const scopeAndSequenceData = {
+            '7': {
+                title: 'Component A Music Life Skills',
+                terms: [
+                    [{ name: 'Making Sounds', weeks: 8 }],
+                    [{ name: 'Listening to Music', weeks: 8 }],
+                    [{ name: 'Music and Feelings', weeks: 8 }],
+                    [{ name: 'Rhythm Games', weeks: 8 }]
+                ]
+            },
+            '8': {
+                title: 'Component B Music Life Skills',
+                terms: [
+                    [{ name: 'Our Favorite Songs', weeks: 8 }],
+                    [{ name: 'Music from Around the World', weeks: 8 }],
+                    [{ name: 'Musical Ideas', weeks: 8 }],
+                    [{ name: 'The Sound of the Story', weeks: 8 }]
+                ]
+            },
+            '9': {
+                title: 'Component C Music Life Skills',
+                terms: [
+                    [{ name: 'Instrumental Skills', weeks: 8 }],
+                    [{ name: 'The Elements in Action', weeks: 8 }],
+                    [{ name: 'Composing with a Purpose', weeks: 8 }],
+                    [{ name: 'My Favorite Artist', weeks: 8 }]
+                ]
+            },
+            '10': {
+                title: 'Component D Music Life Skills',
+                terms: [
+                    [{ name: 'Group Performance', weeks: 8 }],
+                    [{ name: 'Arranging Music', weeks: 8 }],
+                    [{ name: 'Music from History', weeks: 8 }],
+                    [{ name: 'Expressing Through Performance', weeks: 8 }]
+                ]
+            },
+            '11': {
+                title: 'Component E Music Life Skills',
+                terms: [
+                    [{ name: 'Improvisation and Expression', weeks: 8 }],
+                    [{ name: 'Music and Culture', weeks: 8 }],
+                    [{ name: 'The Role of the Composer', weeks: 8 }],
+                    [{ name: 'Performance as Communication', weeks: 8 }]
+                ]
+            },
+            '12': {
+                title: 'Component F Music Life Skills',
+                terms: [
+                    [{ name: 'A Solo Piece', weeks: 8 }],
+                    [{ name: 'My Music World', weeks: 8 }],
+                    [{ name: 'Music Appreciation', weeks: 8 }],
+                    [{ name: 'My Future in Music', weeks: 8 }]
+                ]
+            }
+        };
+
+
+        const unitDetailsData = {
+            'default': {
+                subtitle: 'Select a unit to view details',
+                outcomes: [],
+                description: '',
+                lesson: [],
+                curriculum: [],
+                support: []
+            },
+            // Component A Units
+            'Making Sounds': {
+                subtitle: 'Component A | Term 1',
+                outcomes: ['MULS-PER-01', 'MULS-PER-02', 'MULS-COM-01', 'MLS 3'],
+                description: 'Students will engage in music performances and explore how to create a variety of sounds through vocal and instrumental activities.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'Listening to Music': {
+                subtitle: 'Component A | Term 2',
+                outcomes: ['MULS-LIS-01', 'MULS-LIS-02', 'MLS 6', 'MLS 7'],
+                description: 'Students will respond to music from a variety of styles and cultures, and demonstrate an awareness of the concepts of music when listening.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'Music and Feelings': {
+                subtitle: 'Component A | Term 3',
+                outcomes: ['MULS-PER-03', 'MLS 1', 'MLS 8'],
+                description: 'Students will explore performing music to express themselves and communicate simple ideas and feelings.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'Rhythm Games': {
+                subtitle: 'Component A | Term 4',
+                outcomes: ['MULS-COM-03', 'MLS 4', 'MLS 8'],
+                description: 'Students will engage in improvising, arranging, and composing simple rhythms for enjoyment and to build foundational skills.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            // Component B Units
+            'Our Favorite Songs': {
+                subtitle: 'Component B | Term 1',
+                outcomes: ['MULS-PER-01', 'MULS-PER-02', 'MLS 1', 'MLS 2'],
+                description: 'Students will perform a variety of songs individually and in a group, focusing on safe musical practices and vocal techniques.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'Music from Around the World': {
+                subtitle: 'Component B | Term 2',
+                outcomes: ['MULS-LIS-01', 'MLS 5', 'MLS 7'],
+                description: 'Students will experience and respond to music from a variety of cultural contexts, appreciating how music expresses different ideas.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'Musical Ideas': {
+                subtitle: 'Component B | Term 3',
+                outcomes: ['MULS-COM-02', 'MLS 3', 'MLS 4'],
+                description: 'Students will make choices about musical material to communicate a specific idea, focusing on melody and rhythm.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'The Sound of the Story': {
+                subtitle: 'Component B | Term 4',
+                outcomes: ['MULS-COM-01', 'MLS 4', 'MLS 8'],
+                description: 'Students will create a variety of sounds and music to represent a story or a dramatic scene, demonstrating their understanding of musical elements.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            // Component C Units
+            'Instrumental Skills': {
+                subtitle: 'Component C | Term 1',
+                outcomes: ['MULS-PER-01', 'MULS-PER-02', 'MLS 1', 'MLS 2'],
+                description: 'Students will develop and perform music on a variety of instruments, focusing on technique and safe musical practices.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'The Elements in Action': {
+                subtitle: 'Component C | Term 2',
+                outcomes: ['MULS-LIS-02', 'MLS 6', 'MLS 7'],
+                description: 'Students will respond to how the elements of music, such as pitch, duration, and dynamics, are used in performances.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'Composing with a Purpose': {
+                subtitle: 'Component C | Term 3',
+                outcomes: ['MULS-COM-02', 'MULS-COM-03', 'MLS 4'],
+                description: 'Students will improvise and compose rhythms or melodies with a clear idea in mind, making choices about musical material.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'My Favorite Artist': {
+                subtitle: 'Component C | Term 4',
+                outcomes: ['MULS-PER-03', 'MULS-LIS-01', 'MLS 8'],
+                description: 'Students will appreciate and respond to the music of a favorite artist or band, communicating their feelings and opinions.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            // Component D Units
+            'Group Performance': {
+                subtitle: 'Component D | Term 1',
+                outcomes: ['MULS-PER-01', 'MLS 2', 'MLS 8'],
+                description: 'Students will perform as part of a group, demonstrating their understanding of group dynamics and musical communication.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'Arranging Music': {
+                subtitle: 'Component D | Term 2',
+                outcomes: ['MULS-COM-03', 'MLS 4'],
+                description: 'Students will arrange a familiar song by exploring how to organize and represent musical sounds in a new way.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'Music from History': {
+                subtitle: 'Component D | Term 3',
+                outcomes: ['MULS-LIS-01', 'MULS-LIS-02', 'MLS 5', 'MLS 6'],
+                description: 'Students will respond to music from different historical periods and demonstrate an awareness of the musical concepts of that era.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'Expressing Through Performance': {
+                subtitle: 'Component D | Term 4',
+                outcomes: ['MULS-PER-03', 'MLS 1', 'MLS 2'],
+                description: 'Students will perform music with a focus on expressing themselves and communicating a complex idea or emotion.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            // Component E Units
+            'Improvisation and Expression': {
+                subtitle: 'Component E | Term 1',
+                outcomes: ['MULS-PER-03', 'MULS-COM-02', 'MULS-COM-03', 'MLS 3'],
+                description: 'Students will improvise vocally or instrumentally, making choices about musical material to communicate ideas and feelings.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'Music and Culture': {
+                subtitle: 'Component E | Term 2',
+                outcomes: ['MULS-LIS-01', 'MLS 5', 'MLS 7'],
+                description: 'Students will respond to music from a variety of cultural contexts and appreciate how music is used to convey cultural identity.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'The Role of the Composer': {
+                subtitle: 'Component E | Term 3',
+                outcomes: ['MULS-COM-02', 'MULS-COM-03', 'MLS 4'],
+                description: 'Students will compose a musical work, making choices about musical material to communicate a specific idea to an audience.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'Performance as Communication': {
+                subtitle: 'Component E | Term 4',
+                outcomes: ['MULS-PER-01', 'MULS-PER-03', 'MLS 1', 'MLS 2'],
+                description: 'Students will perform music in a formal setting, demonstrating a high level of technique and a clear intention to communicate ideas.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            // Component F Units
+            'A Solo Piece': {
+                subtitle: 'Component F | Term 1',
+                outcomes: ['MULS-PER-03', 'MULS-PER-02', 'MLS 2', 'MLS 4'],
+                description: 'Students will create and perform a solo piece, focusing on performance techniques and expressing themselves through music.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'My Music World': {
+                subtitle: 'Component F | Term 2',
+                outcomes: ['MULS-PER-01', 'MULS-COM-03', 'MLS 8'],
+                description: 'Students will create a final project that synthesizes their skills, such as a recording of their music or a performance for the school community.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'Music Appreciation': {
+                subtitle: 'Component F | Term 3',
+                outcomes: ['MULS-LIS-01', 'MULS-LIS-02', 'MLS 6', 'MLS 7'],
+                description: 'Students will respond to a range of musical styles and communicate how the elements of music are used to convey meaning.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            },
+            'My Future in Music': {
+                subtitle: 'Component F | Term 4',
+                outcomes: ['MULS-PER-03', 'MULS-COM-02', 'MLS 8'],
+                description: 'Students will create a final project that synthesizes their skills, showcasing their best work and outlining a future plan related to music.',
+                lesson: [],
+                curriculum: ['Music Life Skills Syllabi'],
+                support: []
+            }
+        };
+
+
+        // Function to render the list of resources
+        function renderResources(container, resources) {
+            container.innerHTML = '';
+            if (!resources || resources.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-500">No resources available for this unit.</p>';
+                return;
+            }
+            resources.forEach(resource => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center py-2 text-[#D7153A] hover:text-[#002664] transition-colors duration-200';
+                item.innerHTML = `
+                    <span class="font-medium">${resource}</span>
+                    <div class="flex items-center space-x-2">
+                        <!-- Placeholder for download icon -->
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m-9 6h6a2 2 0 002-2v-6a2 2 0 00-2-2h-6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Toggling functionality for collapsible sections
+        const toggleSection = (headerId, contentId, arrowId) => {
+            const header = document.getElementById(headerId);
+            const content = document.getElementById(contentId);
+            const arrow = document.getElementById(arrowId);
+
+            header.addEventListener('click', () => {
+                content.classList.toggle('hidden');
+                arrow.classList.toggle('rotate-90');
+                arrow.classList.toggle('rotate-0');
+            });
+        };
+
+        // Function to render the main schedule table
+        function renderSchedule(stage) {
+            const data = scopeAndSequenceData[stage];
+            if (!data) return;
+
+            // Clear previous schedule
+            scheduleBody.innerHTML = '';
+
+            data.terms.forEach((term, termIndex) => {
+                const termRow = document.createElement('div');
+                termRow.className = 'grid grid-cols-11 text-sm';
+
+                // Add Term header
+                const termHeader = document.createElement('div');
+                termHeader.className = 'col-span-1 flex items-center justify-center p-4 font-medium bg-[#002664] text-white rotated-text border-r-2 border-b-2 border-white';
+                termHeader.textContent = `Term ${termIndex + 1}`;
+                termRow.appendChild(termHeader);
+
+                // Add units for the term
+                const unitsContainer = document.createElement('div');
+                unitsContainer.className = 'col-span-10 grid grid-cols-10';
+                let currentWeek = 1;
+
+                term.forEach(unit => {
+                    const unitCell = document.createElement('div');
+                    let colSpan = unit.weeks;
+                    const unitData = unitDetailsData[unit.name] || unitDetailsData['default'];
+                    const outcomesText = unitData.outcomes.length > 0 ? `Outcomes: ${unitData.outcomes.join(', ')}` : 'No outcomes listed.';
+
+                    unitCell.className = `col-span-${colSpan} py-4 px-3 bg-white text-gray-800 border-r border-b border-gray-200 table-cell flex-col`;
+                    unitCell.innerHTML = `
+                        <div class="unit-title font-medium text-lg mb-2 text-[#002664]">${unit.name}</div>
+                        <div class="unit-outcomes text-xs font-semibold text-[#D7153A] mb-1">${outcomesText}</div>
+                        <div class="unit-description text-sm">${unitData.description}</div>
+                    `;
+                    unitCell.addEventListener('click', () => showUnitDetails(unit.name));
+                    unitsContainer.appendChild(unitCell);
+                    currentWeek += unit.weeks;
+                });
+
+                // Add empty cells for any gaps before consolidation
+                const remainingWeeks = 8 - (currentWeek - 1);
+                if (remainingWeeks > 0) {
+                    const emptyCell = document.createElement('div');
+                    emptyCell.className = `col-span-${remainingWeeks} py-4 px-3 bg-[#CBDEFD] border-r border-b border-gray-200`;
+                    unitsContainer.appendChild(emptyCell);
+                }
+
+                // Add Consolidation block
+                const consolidationCell = document.createElement('div');
+                consolidationCell.className = `col-span-2 flex flex-col items-center justify-center bg-[#D7153A] text-white border-l border-b border-gray-200`;
+                consolidationCell.innerHTML = `
+                    <span class="font-medium">Consolidation</span>
+                    <span class="text-xs">
+                        <svg class="w-4 h-4 inline-block ml-1 transform rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                    </span>
+                `;
+                unitsContainer.appendChild(consolidationCell);
+                termRow.appendChild(unitsContainer);
+                scheduleBody.appendChild(termRow);
+            });
+        }
+        
+        // Function to show unit details on click
+        function showUnitDetails(unitName) {
+            const data = unitDetailsData[unitName] || unitDetailsData['default'];
+            
+            unitTitle.textContent = unitName;
+            unitSubtitle.textContent = data.subtitle;
+            renderResources(outcomesContent, data.outcomes);
+            renderResources(lessonContent, data.lesson);
+            renderResources(curriculumContent, data.curriculum);
+            renderResources(supportContent, data.support);
+
+            unitDetails.classList.remove('hidden');
+            unitDetails.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Function to handle printing
+        function printSchedule() {
+            window.print();
+        }
+
+        // Event listeners for stage selection buttons
+        stageButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                stageButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                renderSchedule(button.dataset.stage);
+                printButton.classList.remove('hidden');
+            });
+        });
+
+        // Event listener for the new print button
+        printButton.addEventListener('click', printSchedule);
+
+        // Initialize the page with the default schedule (Year 7)
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSchedule('7');
+            printButton.classList.remove('hidden');
+            toggleSection('outcomes-header', 'outcomes-content', 'outcomes-arrow');
+            toggleSection('lesson-header', 'lesson-content', 'lesson-arrow');
+            toggleSection('curriculum-header', 'curriculum-content', 'curriculum-arrow');
+            toggleSection('support-header', 'support-content', 'support-arrow');
+        });
+    </script>
+
+<script>
+(function(){
+  if (window.__sepResourcesPatched__) return;
+  window.__sepResourcesPatched__ = true;
+
+  const storageKey = "resources-" + (document.title || location.pathname).replace(/\s+/g, "_");
+
+  function qs(id){ return document.getElementById(id); }
+
+  function addResourceToList(name, url){
+    const resourceList = qs("resource-list");
+    if(!resourceList) return;
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    a.textContent = name;
+    a.className = "text-[#146CFD] hover:underline";
+    li.appendChild(a);
+    resourceList.appendChild(li);
+  }
+
+  function saveResource(name, url){
+    const saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    saved.push({name, url});
+    localStorage.setItem(storageKey, JSON.stringify(saved));
+  }
+
+  function loadResources(){
+    const saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    saved.forEach(r => addResourceToList(r.name, r.url));
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    const outcomesHeader = document.getElementById("outcomes-header");
+    const outcomesContent = document.getElementById("outcomes-content");
+    const outcomesArrow = document.getElementById("outcomes-arrow");
+    if(outcomesHeader && outcomesContent && outcomesArrow){
+      outcomesHeader.addEventListener("click", ()=>{
+        outcomesContent.classList.toggle("hidden");
+        outcomesArrow.classList.toggle("rotate-90");
+      });
+    }
+
+    const resourcesHeader = document.getElementById("resources-header");
+    const resourcesContent = document.getElementById("resources-content");
+    const resourcesArrow = document.getElementById("resources-arrow");
+    if(resourcesHeader && resourcesContent && resourcesArrow){
+      resourcesHeader.addEventListener("click", ()=>{
+        resourcesContent.classList.toggle("hidden");
+        resourcesArrow.classList.toggle("rotate-90");
+      });
+    }
+
+    const addBtn = document.getElementById("add-resource");
+    const fileInput = document.getElementById("resource-file");
+    if(addBtn && fileInput){
+      addBtn.addEventListener("click", ()=> fileInput.click());
+      fileInput.addEventListener("change", ()=>{
+        const file = fileInput.files && fileInput.files[0];
+        if(!file) return;
+        const url = URL.createObjectURL(file);
+        addResourceToList(file.name, url);
+        saveResource(file.name, url);
+        fileInput.value = "";
+      });
+    }
+
+    loadResources();
+  });
+})();
+</script>
+</body>
+</html>

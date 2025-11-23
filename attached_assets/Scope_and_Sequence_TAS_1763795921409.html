@@ -1,0 +1,703 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAS Life Skills Scope and Sequence</title>
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS via CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc;
+        }
+        .table-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .table-cell {
+            padding: 1rem;
+            min-height: 80px;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            text-align: left;
+        }
+        .table-cell:hover {
+            background-color: #146CFD;
+            color: #ffffff;
+        }
+        .table-cell:hover .unit-title, .table-cell:hover .unit-outcomes, .table-cell:hover .unit-description {
+            color: #ffffff;
+        }
+        .rotated-text {
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            white-space: nowrap;
+        }
+        /* Custom styles for the dropdown to match the overall aesthetic */
+        .select-container {
+            padding: 1rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .select-button, .print-button {
+            background-color: #146CFD;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 9999px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin: 0 8px;
+            border: none;
+        }
+        .select-button.active {
+            background-color: #002664;
+            box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff;
+            }
+            .select-container, .print-button, #unit-details, .p-4.text-sm.font-semibold, .rotated-text {
+                display: none;
+            }
+            .table-container {
+                padding: 0;
+                box-shadow: none;
+            }
+            .table-cell {
+                border-bottom: 1px solid #000;
+                padding: 0.5rem;
+                min-height: auto;
+                cursor: default;
+            }
+            .unit-title {
+                font-size: 1.1rem;
+            }
+            .unit-outcomes {
+                font-size: 0.7rem;
+            }
+            .unit-description {
+                font-size: 0.8rem;
+            }
+            #schedule-header {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 sm:p-8">
+
+    <div class="text-center text-3xl sm:text-4xl font-extrabold text-[#002664] mt-8 mb-4">TAS Life Skills Scope and Sequence</div>
+    <div class="select-container">
+        <div class="flex flex-nowrap justify-center space-x-1 sm:space-x-2">
+            <button class="select-button active" data-stage="7">Component A</button>
+            <button class="select-button" data-stage="8">Component B</button>
+            <button class="select-button" data-stage="9">Component C</button>
+            <button class="select-button" data-stage="10">Component D</button>
+            <button class="select-button" data-stage="11">Component E</button>
+            <button class="select-button" data-stage="12">Component F</button>
+            <button class="print-button hidden" id="print-button">Print PDF</button>
+        </div>
+    </div>
+
+    <div class="table-container bg-white rounded-xl shadow-lg overflow-hidden mt-8">
+        <div class="p-4 text-sm font-semibold text-gray-600">
+            *Click on the unit name to access available resources
+        </div>
+        <div id="schedule-header" class="grid grid-cols-11 text-center text-sm font-medium bg-[#002664] text-white border-b-2 border-white">
+            <!-- Header Row -->
+            <div class="col-span-1 border-r border-white"></div>
+            <div class="col-span-1 py-4">Week 1</div>
+            <div class="col-span-1 py-4">Week 2</div>
+            <div class="col-span-1 py-4">Week 3</div>
+            <div class="col-span-1 py-4">Week 4</div>
+            <div class="col-span-1 py-4">Week 5</div>
+            <div class="col-span-1 py-4">Week 6</div>
+            <div class="col-span-1 py-4">Week 7</div>
+            <div class="col-span-1 py-4">Week 8</div>
+            <div class="col-span-2 py-4 border-l border-white">Weeks 9 & 10</div>
+        </div>
+
+        <!-- Table Body Rows will be dynamically injected here -->
+        <div id="schedule-body" class="text-sm"></div>
+    </div>
+
+    <!-- New section that opens on click -->
+    
+    <!-- New standardized Unit Details panel -->
+    <div id="unit-details" class="table-container bg-white rounded-xl shadow-lg mt-8 p-8 transition-all duration-300 ease-in-out hidden">
+        <h2 id="unit-title" class="text-2xl font-bold text-[#146CFD] mb-2"></h2>
+        <p id="unit-subtitle" class="text-lg text-[#146CFD] mb-4"></p>
+        <p class="text-sm text-gray-500 mb-6">Lesson resources will be released by Term 1, 2026</p>
+
+        <!--  Section -->
+        <div class="border-t border-b border-gray-200 py-4">
+            <div id="outcomes-header" class="flex justify-between items-center cursor-pointer">
+                <h3 class="text-lg font-semibold text-[#146CFD]"></h3>
+                <svg id="outcomes-arrow" class="w-6 h-6 text-gray-500 transform transition-transform duration-300 rotate-90" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"></path>
+                </svg>
+            </div>
+            <div id="outcomes-content" class="mt-4 hidden"></div>
+        </div>
+
+        <!-- Resources Section -->
+        <div class="border-b border-gray-200 py-4 mt-4">
+            <div id="resources-header" class="flex justify-between items-center cursor-pointer">
+                <h3 class="text-lg font-semibold text-[#146CFD]">Resources</h3>
+                <svg id="resources-arrow" class="w-6 h-6 text-gray-500 transform transition-transform duration-300 rotate-90" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"></path>
+                </svg>
+            </div>
+            <div id="resources-content" class="mt-4 hidden">
+                <button id="add-resource" class="bg-[#146CFD] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#002664]">+ Add Resource</button>
+                <input type="file" id="resource-file" class="hidden" />
+                <ul id="resource-list" class="mt-4 space-y-2 text-sm text-gray-700"></ul>
+            </div>
+        </div>
+    </div>
+
+            <div id="outcomes-content" class="mt-4 hidden"></div>
+        </div>
+        
+        <!-- Lesson Resources Section -->
+        <div class="border-t border-b border-gray-200 py-4">
+            <div id="lesson-header" class="flex justify-between items-center cursor-pointer">
+                <h3 class="text-lg font-semibold text-[#146CFD]"></h3>
+                <svg id="lesson-arrow" class="w-6 h-6 text-gray-500 transform transition-transform duration-300 rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+            </div>
+            <div id="lesson-content" class="mt-4 hidden"></div>
+        </div>
+
+        <!-- Curriculum Resources Section -->
+        <div class="border-b border-gray-200 py-4">
+            <div id="curriculum-header" class="flex justify-between items-center cursor-pointer">
+                <h3 class="text-lg font-semibold text-[#146CFD]"></h3>
+                <svg id="curriculum-arrow" class="w-6 h-6 text-gray-500 transform transition-transform duration-300 rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+            </div>
+            <div id="curriculum-content" class="mt-4 hidden"></div>
+        </div>
+
+        <!-- Support Resources Section -->
+        <div class="border-b border-gray-200 py-4">
+            <div id="support-header" class="flex justify-between items-center cursor-pointer">
+                <h3 class="text-lg font-semibold text-[#146CFD]"></h3>
+                <svg id="support-arrow" class="w-6 h-6 text-gray-500 transform transition-transform duration-300 rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+            </div>
+            <div id="support-content" class="mt-4 hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const scheduleBody = document.getElementById('schedule-body');
+        const unitDetails = document.getElementById('unit-details');
+        const unitTitle = document.getElementById('unit-title');
+        const unitSubtitle = document.getElementById('unit-subtitle');
+        const outcomesContent = document.getElementById('outcomes-content');
+        const lessonContent = document.getElementById('lesson-content');
+        const curriculumContent = document.getElementById('curriculum-content');
+        const supportContent = document.getElementById('support-content');
+        const stageButtons = document.querySelectorAll('.select-button');
+        const printButton = document.getElementById('print-button');
+
+        // Central data object for the TAS Life Skills scope and sequence
+        const scopeAndSequenceData = {
+            '7': {
+                title: 'Component A TAS Life Skills',
+                terms: [
+                    [{ name: 'Safety in the Workshop', weeks: 8 }],
+                    [{ name: 'Designing a Solution', weeks: 8 }],
+                    [{ name: 'Simple Cooking', weeks: 8 }],
+                    [{ name: 'Digital Tools for Design', weeks: 8 }]
+                ]
+            },
+            '8': {
+                title: 'Component B TAS Life Skills',
+                terms: [
+                    [{ name: 'Exploring Textiles', weeks: 8 }],
+                    [{ name: 'Food Choices and Health', weeks: 8 }],
+                    [{ name: 'Production Process', weeks: 8 }],
+                    [{ name: 'Technologies in Our World', weeks: 8 }]
+                ]
+            },
+            '9': {
+                title: 'Component C TAS Life Skills',
+                terms: [
+                    [{ name: 'Food Preparation and Processing', weeks: 8 }],
+                    [{ name: 'Digital Communication in TAS', weeks: 8 }],
+                    [{ name: 'Textiles in Everyday Life', weeks: 8 }],
+                    [{ name: 'Design and the Environment', weeks: 8 }]
+                ]
+            },
+            '10': {
+                title: 'Component D TAS Life Skills',
+                terms: [
+                    [{ name: 'Planning a Project', weeks: 8 }],
+                    [{ name: 'Food and Culture', weeks: 8 }],
+                    [{ name: 'Evaluating Designs', weeks: 8 }],
+                    [{ name: 'Textile Care and Value', weeks: 8 }]
+                ]
+            },
+            '11': {
+                title: 'Component E TAS Life Skills',
+                terms: [
+                    [{ name: 'Textile Project', weeks: 8 }],
+                    [{ name: 'Digital Project Management', weeks: 8 }],
+                    [{ name: 'Food Safety and Technology', weeks: 8 }],
+                    [{ name: 'Design and Society', weeks: 8 }]
+                ]
+            },
+            '12': {
+                title: 'Component F TAS Life Skills',
+                terms: [
+                    [{ name: 'My Design Project', weeks: 8 }],
+                    [{ name: 'My Food Future', weeks: 8 }],
+                    [{ name: 'Textiles and Value', weeks: 8 }],
+                    [{ name: 'My TAS Plan', weeks: 8 }]
+                ]
+            }
+        };
+
+
+        const unitDetailsData = {
+            'default': {
+                subtitle: 'Select a unit to view details',
+                outcomes: [],
+                description: '',
+                lesson: [],
+                curriculum: [],
+                support: []
+            },
+            // Component A Units
+            'Safety in the Workshop': {
+                subtitle: 'Component A | Term 1',
+                outcomes: ['TELS-SDP-01', 'TELS-SAF-01', 'FTLS-1', 'TDLS 12', 'DTLS 10'],
+                description: 'Students will demonstrate safe practices when using tools, materials, and processes, and recognise technologies used in everyday life.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Designing a Solution': {
+                subtitle: 'Component A | Term 2',
+                outcomes: ['TELS-PPM-01', 'TELS-DES-01', 'DTLS 1'],
+                description: 'Students will participate in planning projects and communicate design ideas, exploring a simple design process.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Simple Cooking': {
+                subtitle: 'Component A | Term 3',
+                outcomes: ['FTLS-1', 'FTLS-7', 'TDLS 10'],
+                description: 'Students will learn hygienic and safe practices in the kitchen and participate in making simple food items.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Digital Tools for Design': {
+                subtitle: 'Component A | Term 4',
+                outcomes: ['TELS-DIG-01', 'TELS-DIG-02', 'TELS-DES-01', 'DTLS 3'],
+                description: 'Students will use digital technologies safely to store or share information when designing a project.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            // Component B Units
+            'Exploring Textiles': {
+                subtitle: 'Component B | Term 1',
+                outcomes: ['TDLS 6', 'TDLS 10', 'TDLS 4'],
+                description: 'Students will explore a range of textiles and their features, and use appropriate materials and techniques to create a simple textile item.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Food Choices and Health': {
+                subtitle: 'Component B | Term 2',
+                outcomes: ['FTLS-3', 'FTLS-4'],
+                description: 'Students will recognise the nutritional value of food and the impact of food choices on their health.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Production Process': {
+                subtitle: 'Component B | Term 3',
+                outcomes: ['TELS-PPM-02', 'TELS-PPM-03', 'DTLS 5'],
+                description: 'Students will participate in the production of a simple project, using and recording numbers and measurements.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Technologies in Our World': {
+                subtitle: 'Component B | Term 4',
+                outcomes: ['TELS-MSC-01', 'TELS-SDP-02', 'DTLS 11'],
+                description: 'Students will communicate how a range of technologies and materials are used in everyday life, and recognise how technologies are related to sustainability.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            // Component C Units
+            'Food Preparation and Processing': {
+                subtitle: 'Component C | Term 1',
+                outcomes: ['FTLS-2', 'FTLS-6'],
+                description: 'Students will recognise the relationship between food properties, preparation, and processing, and use a variety of communication techniques to share their knowledge.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Digital Communication in TAS': {
+                subtitle: 'Component C | Term 2',
+                outcomes: ['TELS-DIG-01', 'TELS-DIG-02', 'FTLS-5', 'TELS-DES-01'],
+                description: 'Students will use digital technologies to store, share, and communicate information when designing and producing project work.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Textiles in Everyday Life': {
+                subtitle: 'Component C | Term 3',
+                outcomes: ['TDLS 7', 'TDLS 2'],
+                description: 'Students will identify textiles for a range of applications and explore factors that influence textile design.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Design and the Environment': {
+                subtitle: 'Component C | Term 4',
+                outcomes: ['TELS-SDP-02', 'TELS-PPM-01', 'DTLS 11'],
+                description: 'Students will recognise the relationship between sustainability, design, and production, and explore how technology influences the environment.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            // Component D Units
+            'Planning a Project': {
+                subtitle: 'Component D | Term 1',
+                outcomes: ['TELS-PPM-01', 'TELS-DES-01', 'DTLS 9'],
+                description: 'Students will plan a project, from initial design ideas to selecting materials and techniques for production.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Food and Culture': {
+                subtitle: 'Component D | Term 2',
+                outcomes: ['FTLS-3', 'FTLS-4', 'FTLS-5'],
+                description: 'Students will gather information from a variety of sources about food habits and choices, and recognise the impact of food on health.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Evaluating Designs': {
+                subtitle: 'Component D | Term 3',
+                outcomes: ['DTLS 6', 'DTLS 8', 'TELS-SDP-01'],
+                description: 'Students will explore a range of designs and evaluate their suitability for different applications.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Textile Care and Value': {
+                subtitle: 'Component D | Term 4',
+                outcomes: ['TDLS 11', 'TDLS 13'],
+                description: 'Students will select and use appropriate equipment to care for textile items, and explore factors that contribute to the quality and value of textiles.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            // Component E Units
+            'Textile Project': {
+                subtitle: 'Component E | Term 1',
+                outcomes: ['TDLS 5', 'TDLS 2', 'TDLS 4'],
+                description: 'Students will use a design process in the production of a textile project, exploring different factors that influence textile design.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Digital Project Management': {
+                subtitle: 'Component E | Term 2',
+                outcomes: ['TELS-DIG-01', 'TELS-DIG-02', 'TELS-PPM-01', 'TELS-DES-01'],
+                description: 'Students will use digital technologies to manage a design project, including storing and sharing information and communicating design ideas.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Food Safety and Technology': {
+                subtitle: 'Component E | Term 3',
+                outcomes: ['FTLS-1', 'FTLS-2', 'FTLS-7'],
+                description: 'Students will demonstrate hygienic and safe practices in handling and storing food, and recognise the relationship between food properties and processing.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Design and Society': {
+                subtitle: 'Component E | Term 4',
+                outcomes: ['TELS-PDP-01', 'DTLS 11', 'TELS-MSC-01'],
+                description: 'Students will explore the relationship between design and technology, the individual, and society, and recognise processes used by designers.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            // Component F Units
+            'My Design Project': {
+                subtitle: 'Component F | Term 1',
+                outcomes: ['DTLS 5', 'DTLS 4', 'DTLS 10', 'DTLS 9'],
+                description: 'Students will use a design process to create and produce an individual project, demonstrating safe practices and advanced techniques.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'My Food Future': {
+                subtitle: 'Component F | Term 2',
+                outcomes: ['FTLS-1', 'FTLS-7', 'FTLS-2', 'FTLS-6'],
+                description: 'Students will plan and make food items for a specific purpose, such as a special event or a post-school meal plan, demonstrating hygienic practices.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'Textiles and Value': {
+                subtitle: 'Component F | Term 3',
+                outcomes: ['TDLS 9', 'TDLS 13', 'TDLS 8'],
+                description: 'Students will explore factors that contribute to the quality and value of textiles, and select materials for a specific purpose.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            },
+            'My TAS Plan': {
+                subtitle: 'Component F | Term 4',
+                outcomes: ['TELS-SDP-02', 'TELS-PPM-03', 'TELS-DES-01', 'DTLS 11'],
+                description: 'Students will create a final project that synthesizes their skills, showcasing their best work and outlining a future plan related to TAS.',
+                lesson: [],
+                curriculum: ['TAS Life Skills Syllabi'],
+                support: []
+            }
+        };
+
+
+        // Function to render the list of resources
+        function renderResources(container, resources) {
+            container.innerHTML = '';
+            if (!resources || resources.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-500">No resources available for this unit.</p>';
+                return;
+            }
+            resources.forEach(resource => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center py-2 text-[#D7153A] hover:text-[#002664] transition-colors duration-200';
+                item.innerHTML = `
+                    <span class="font-medium">${resource}</span>
+                    <div class="flex items-center space-x-2">
+                        <!-- Placeholder for download icon -->
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m-9 6h6a2 2 0 002-2v-6a2 2 0 00-2-2h-6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Toggling functionality for collapsible sections
+        const toggleSection = (headerId, contentId, arrowId) => {
+            const header = document.getElementById(headerId);
+            const content = document.getElementById(contentId);
+            const arrow = document.getElementById(arrowId);
+
+            header.addEventListener('click', () => {
+                content.classList.toggle('hidden');
+                arrow.classList.toggle('rotate-90');
+                arrow.classList.toggle('rotate-0');
+            });
+        };
+
+        // Function to render the main schedule table
+        function renderSchedule(stage) {
+            const data = scopeAndSequenceData[stage];
+            if (!data) return;
+
+            // Clear previous schedule
+            scheduleBody.innerHTML = '';
+
+            data.terms.forEach((term, termIndex) => {
+                const termRow = document.createElement('div');
+                termRow.className = 'grid grid-cols-11 text-sm';
+
+                // Add Term header
+                const termHeader = document.createElement('div');
+                termHeader.className = 'col-span-1 flex items-center justify-center p-4 font-medium bg-[#002664] text-white rotated-text border-r-2 border-b-2 border-white';
+                termHeader.textContent = `Term ${termIndex + 1}`;
+                termRow.appendChild(termHeader);
+
+                // Add units for the term
+                const unitsContainer = document.createElement('div');
+                unitsContainer.className = 'col-span-10 grid grid-cols-10';
+                let currentWeek = 1;
+
+                term.forEach(unit => {
+                    const unitCell = document.createElement('div');
+                    let colSpan = unit.weeks;
+                    const unitData = unitDetailsData[unit.name] || unitDetailsData['default'];
+                    const outcomesText = unitData.outcomes.length > 0 ? `Outcomes: ${unitData.outcomes.join(', ')}` : 'No outcomes listed.';
+
+                    unitCell.className = `col-span-${colSpan} py-4 px-3 bg-white text-gray-800 border-r border-b border-gray-200 table-cell flex-col`;
+                    unitCell.innerHTML = `
+                        <div class="unit-title font-medium text-lg mb-2">${unit.name}</div>
+                        <div class="unit-outcomes text-xs font-semibold text-[#D7153A] mb-1">${outcomesText}</div>
+                        <div class="unit-description text-sm">${unitData.description}</div>
+                    `;
+                    unitCell.addEventListener('click', () => showUnitDetails(unit.name));
+                    unitsContainer.appendChild(unitCell);
+                    currentWeek += unit.weeks;
+                });
+
+                // Add empty cells for any gaps before consolidation
+                const remainingWeeks = 8 - (currentWeek - 1);
+                if (remainingWeeks > 0) {
+                    const emptyCell = document.createElement('div');
+                    emptyCell.className = `col-span-${remainingWeeks} py-4 px-3 bg-[#CBDEFD] border-r border-b border-gray-200`;
+                    unitsContainer.appendChild(emptyCell);
+                }
+
+                // Add Consolidation block
+                const consolidationCell = document.createElement('div');
+                consolidationCell.className = `col-span-2 flex flex-col items-center justify-center bg-[#D7153A] text-white border-l border-b border-gray-200`;
+                consolidationCell.innerHTML = `
+                    <span class="font-medium">Consolidation</span>
+                    <span class="text-xs">
+                        <svg class="w-4 h-4 inline-block ml-1 transform rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                    </span>
+                `;
+                unitsContainer.appendChild(consolidationCell);
+                termRow.appendChild(unitsContainer);
+                scheduleBody.appendChild(termRow);
+            });
+        }
+        
+        // Function to show unit details on click
+        function showUnitDetails(unitName) {
+            const data = unitDetailsData[unitName] || unitDetailsData['default'];
+            
+            unitTitle.textContent = unitName;
+            unitSubtitle.textContent = data.subtitle;
+            renderResources(outcomesContent, data.outcomes);
+            renderResources(lessonContent, data.lesson);
+            renderResources(curriculumContent, data.curriculum);
+            renderResources(supportContent, data.support);
+
+            unitDetails.classList.remove('hidden');
+            unitDetails.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Function to handle printing
+        function printSchedule() {
+            window.print();
+        }
+
+        // Event listeners for stage selection buttons
+        stageButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                stageButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                renderSchedule(button.dataset.stage);
+                printButton.classList.remove('hidden');
+            });
+        });
+
+        // Event listener for the new print button
+        printButton.addEventListener('click', printSchedule);
+
+        // Initialize the page with the default schedule (Year 7)
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSchedule('7');
+            printButton.classList.remove('hidden');
+            toggleSection('outcomes-header', 'outcomes-content', 'outcomes-arrow');
+            toggleSection('lesson-header', 'lesson-content', 'lesson-arrow');
+            toggleSection('curriculum-header', 'curriculum-content', 'curriculum-arrow');
+            toggleSection('support-header', 'support-content', 'support-arrow');
+        });
+    </script>
+
+<script>
+(function(){
+  if (window.__sepResourcesPatched__) return;
+  window.__sepResourcesPatched__ = true;
+
+  const storageKey = "resources-" + (document.title || location.pathname).replace(/\s+/g, "_");
+
+  function qs(id){ return document.getElementById(id); }
+
+  function addResourceToList(name, url){
+    const resourceList = qs("resource-list");
+    if(!resourceList) return;
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    a.textContent = name;
+    a.className = "text-[#146CFD] hover:underline";
+    li.appendChild(a);
+    resourceList.appendChild(li);
+  }
+
+  function saveResource(name, url){
+    const saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    saved.push({name, url});
+    localStorage.setItem(storageKey, JSON.stringify(saved));
+  }
+
+  function loadResources(){
+    const saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    saved.forEach(r => addResourceToList(r.name, r.url));
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    const outcomesHeader = document.getElementById("outcomes-header");
+    const outcomesContent = document.getElementById("outcomes-content");
+    const outcomesArrow = document.getElementById("outcomes-arrow");
+    if(outcomesHeader && outcomesContent && outcomesArrow){
+      outcomesHeader.addEventListener("click", ()=>{
+        outcomesContent.classList.toggle("hidden");
+        outcomesArrow.classList.toggle("rotate-90");
+      });
+    }
+
+    const resourcesHeader = document.getElementById("resources-header");
+    const resourcesContent = document.getElementById("resources-content");
+    const resourcesArrow = document.getElementById("resources-arrow");
+    if(resourcesHeader && resourcesContent && resourcesArrow){
+      resourcesHeader.addEventListener("click", ()=>{
+        resourcesContent.classList.toggle("hidden");
+        resourcesArrow.classList.toggle("rotate-90");
+      });
+    }
+
+    const addBtn = document.getElementById("add-resource");
+    const fileInput = document.getElementById("resource-file");
+    if(addBtn && fileInput){
+      addBtn.addEventListener("click", ()=> fileInput.click());
+      fileInput.addEventListener("change", ()=>{
+        const file = fileInput.files && fileInput.files[0];
+        if(!file) return;
+        const url = URL.createObjectURL(file);
+        addResourceToList(file.name, url);
+        saveResource(file.name, url);
+        fileInput.value = "";
+      });
+    }
+
+    loadResources();
+  });
+})();
+</script>
+</body>
+</html>
